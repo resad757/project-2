@@ -17,14 +17,15 @@ jobs:
           echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
         shell: bash
 
+      # Cache Buildozer global directory
       - name: Cache Buildozer global directory
         uses: actions/cache@v2
         with:
           path: .buildozer_global
           key: ${{ runner.os }}-buildozer-global-${{ hashFiles('buildozer.spec') }}
 
-      - name: Cache Buildozer local directory
-        uses: actions/cache@v2
+      # Cache Buildozer local directory
+      - uses: actions/cache@v2
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
