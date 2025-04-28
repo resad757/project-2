@@ -24,6 +24,7 @@ jobs:
           path: .buildozer_global
           key: ${{ runner.os }}-buildozer-global-${{ hashFiles('buildozer.spec') }}
 
+
       # Cache Buildozer local directory
       - name: Cache Buildozer local directory
         uses: actions/cache@v2
