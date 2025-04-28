@@ -5,28 +5,25 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # Ubuntu 20.04-dən 22.04-ə keçid
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v2
 
-      # used to cache dependencies with a timeout
       - name: Get Date
         id: get-date
         run: |
           echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
         shell: bash
 
-      # Cache Buildozer global directory
       - name: Cache Buildozer global directory
-        uses: actions/cache@v3   # v2 -> v3
+        uses: actions/cache@v3
         with:
           path: .buildozer_global
           key: ${{ runner.os }}-buildozer-global-${{ hashFiles('buildozer.spec') }}
 
-      # Cache Buildozer local directory
       - name: Cache Buildozer local directory
-        uses: actions/cache@v3   # v2 -> v3
+        uses: actions/cache@v3
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
@@ -38,8 +35,16 @@ jobs:
           command: buildozer android debug
           buildozer_version: stable
 
+      - name: Check if file exists
+        run: |
+          if [ ! -f "${{ steps.buildozer.outputs.filename }}" ]; then
+            echo "Error: Output file does not exist!"
+            exit 1
+          fi
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: ${{ steps.buildozer.outputs.filename }}  # Faylın yolunu burada düzgün daxil etdiyinizdən əmin olun
+
